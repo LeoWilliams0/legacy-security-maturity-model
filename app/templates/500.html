@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Server Error{% endblock %}
+{% block content %}
+  <div class="container mx-auto text-center py-20">
+    <h1 class="text-6xl font-bold">500</h1>
+    <p class="text-2xl mt-4">Oops Something went wrong on our end.</p>
+    <a href="{{ url_for('main.index') }}" class="mt-6 inline-block btn-purple">Go Home</a>
+  </div>
+{% endblock %}

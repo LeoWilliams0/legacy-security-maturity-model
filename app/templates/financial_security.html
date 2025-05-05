@@ -1,0 +1,486 @@
+{% extends 'base.html' %} {% block title %}Financial Security Assessment{% endblock %} {% block content %}
+<div class="container mx-auto">
+  <div class="dark-card rounded shadow p-6">
+    <h1 class="text-2xl font-bold mb-6">Financial Security Assessment</h1>
+    <form method="POST" action="{{ url_for('main.financial_security') }}">
+      {{ form.hidden_tag() }}
+
+      <!-- 1. Annual Security Budget -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Annual Security Budget (£)
+          <span class="info-icon ml-1" data-tooltip="Your organisation's total allocated budget for cybersecurity measures for the current fiscal year. Industry recommendation: 7-10% of IT budget or 0.5-1.5% of annual revenue.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="annualBudgetDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="annualBudgetSlider" min="0" max="5000000" step="100" value="15000" class="slider w-full appearance-none" />
+          <button type="button" id="annualBudgetIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="annualBudgetHidden" name="annual_security_budget" value="15000" />
+          <input type="text" id="annualBudgetDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 2. Planned Security Investment -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Planned Security Investment (£)
+          <span class="info-icon ml-1" data-tooltip="Funds earmarked for new security tools or upgrades in the next year. This should typically be 25-40% of your annual security budget to maintain competitive security posture.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="plannedInvestmentDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="plannedInvestmentSlider" min="0" max="2000000" step="100" value="10000" class="slider w-full appearance-none" />
+          <button type="button" id="plannedInvestmentIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="plannedInvestmentHidden" name="planned_security_investment" value="10000" />
+          <input type="text" id="plannedInvestmentDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 3. Security Staff & Training -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Security Staff & Training (£)
+          <span class="info-icon ml-1" data-tooltip="Budget allocated for security personnel salaries and professional development/training programs. Industry benchmark: 35-50% of security budget. For a £15,000 security budget, consider allocating £5,250-£7,500 to staff and training.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="staffTrainingDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="staffTrainingSlider" min="0" max="500000" step="100" value="5000" class="slider w-full appearance-none" />
+          <button type="button" id="staffTrainingIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="staffTrainingHidden" name="security_staff_training" value="5000" />
+          <input type="text" id="staffTrainingDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 4. Annual Revenue -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Annual Revenue (£)
+          <span class="info-icon ml-1" data-tooltip="Your organisation's total annual income before expenses. Security budget recommendation: 0.5-1.5% of revenue. For £1M revenue, consider £5,000-£15,000 for security. High-risk industries may require up to 5% of revenue for security.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="annualRevenueDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="annualRevenueSlider" min="0" max="100000000" step="100" value="1000000" class="slider w-full appearance-none" />
+          <button type="button" id="annualRevenueIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="annualRevenueHidden" name="annual_revenue" value="1000000" />
+          <input type="text" id="annualRevenueDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 5. Potential Fine -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Potential Fine (£)
+          <span class="info-icon ml-1" data-tooltip="Estimated regulatory penalties for non-compliance or breaches. GDPR fines can reach up to 4% of annual revenue or £17.5M, whichever is greater. For £1M revenue, maximum fine could be £40,000. Adjust based on your data sensitivity and regulatory landscape.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="potentialFineDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="potentialFineSlider" min="0" max="2000000" step="100" value="50000" class="slider w-full appearance-none" />
+          <button type="button" id="potentialFineIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="potentialFineHidden" name="potential_fine" value="50000" />
+          <input type="text" id="potentialFineDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 6. Potential Breach Cost -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Potential Breach Cost (£)
+          <span class="info-icon ml-1" data-tooltip="Total breach impact including remediation, legal costs, and PR. Formula: Regulatory fines + (Downtime hours × Hourly cost) + Remediation costs + Reputational damage. Example: £50,000 fine + (24 hours × £1,000) + £20,000 remediation + £10,000 PR = £104,000 total breach cost.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="potentialBreachDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="potentialBreachSlider" min="0" max="5000000" step="100" value="100000" class="slider w-full appearance-none" />
+          <button type="button" id="potentialBreachIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="potentialBreachHidden" name="potential_breach_cost" value="100000" />
+          <input type="text" id="potentialBreachDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 7. Downtime Cost per Hour -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Downtime Cost per Hour (£)
+          <span class="info-icon ml-1" data-tooltip="Financial cost of system unavailability. Quick calculation: (Annual revenue ÷ 8760 hours per year) × Business impact factor (1-3). For £1M revenue with medium impact (1.5): (£1,000,000 ÷ 8760) × 1.5 = £171 per hour. High-impact sectors may use factor of 2-3.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="downtimeDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="downtimeSlider" min="0" max="100000" step="100" value="1000" class="slider w-full appearance-none" />
+          <button type="button" id="downtimeIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="downtimeHidden" name="downtime_cost_per_hour" value="1000" />
+          <input type="text" id="downtimeDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <!-- 8. Average Downtime per Year (hours) -->
+      <div class="mb-6">
+        <label for="{{ form.average_downtime_hours.id }}" class="block text-gray-300 font-medium mb-2">
+          {{ form.average_downtime_hours.label.text }}
+          <span class="info-icon ml-1" data-tooltip="Average hours of system unavailability per year due to security incidents. Industry averages: Low risk: 1-4 hours, Medium risk: 4-12 hours, High risk: 12-24+ hours. Annual financial impact: Hours × Hourly downtime cost (e.g., 8 hours × £1,000 = £8,000).">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        {{ form.average_downtime_hours(class_="w-full p-2 rounded text-black bg-gray-200") }} {% for error in form.average_downtime_hours.errors %}
+        <p class="text-red-500 text-sm">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- 9. Acceptable Risk Level -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Acceptable Risk Level
+          <span class="info-icon ml-1" data-tooltip="Your organisation's risk tolerance affects security investment. Low risk tolerance: Security budget typically 1-2% of revenue. Medium: 0.5-1% of revenue. High: 0.2-0.5% of revenue. For £1M revenue: Low = £10-20K, Medium = £5-10K, High = £2-5K.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex space-x-4">
+          {% for choice in form.acceptable_risk_level %}
+          <div class="flex items-center">
+            {{ choice(class_="h-4 w-4 text-purple-600 focus:ring-purple-500") }}
+            <label for="{{ choice.id }}" class="ml-2 text-gray-300">{{ choice.label.text }}</label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 10. Has Cyber Insurance? -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Has Cyber Insurance?
+          <span class="info-icon ml-1" data-tooltip="Cyber insurance reduces financial risk from security incidents. Cost typically 0.1-0.5% of coverage amount. For £1M coverage: £1,000-£5,000 annual premium. ROI calculation: (Potential breach cost × Probability) ÷ Premium cost. Example: (£100K × 5%) ÷ £3K = 1.67 (Positive ROI if > 1).">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex space-x-4">
+          {% for choice in form.has_cyber_insurance %}
+          <div class="flex items-center">
+            {{ choice(class_="h-4 w-4 text-purple-600 focus:ring-purple-500") }}
+            <label for="{{ choice.id }}" class="ml-2 text-gray-300">{{ choice.label.text }}</label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 11. Cyber Insurance Coverage (£) -->
+      <div class="mb-6">
+        <label class="block text-gray-300 font-medium mb-2">
+          Cyber Insurance Coverage (£)
+          <span class="info-icon ml-1" data-tooltip="Recommended coverage: 1-3× your potential breach cost. For £100K potential breach: £100K-£300K coverage. Consider risk level: Low risk: 1× breach cost, Medium risk: 2× breach cost, High risk: 3× breach cost or more.">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </span>
+        </label>
+        <div class="flex items-center space-x-2 mb-2">
+          <button type="button" id="insuranceCoverageDecrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">-</button>
+          <input type="range" id="insuranceCoverageSlider" min="0" max="5000000" step="100" value="0" class="slider w-full appearance-none" />
+          <button type="button" id="insuranceCoverageIncrease" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="hidden" id="insuranceCoverageHidden" name="cyber_insurance_coverage" value="0" />
+          <input type="text" id="insuranceCoverageDisplay" class="p-2 rounded text-white bg-gray-700 w-28 border-none focus:ring-0" value="" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-purple py-2 px-4 rounded shadow-md"><i class="fas fa-save mr-2"></i> Save Financial Assessment</button>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<style>
+  /* Slider styling for Chrome, Safari, Opera */
+  .slider::-webkit-slider-runnable-track {
+    background: #4b5563;
+    height: 6px;
+    border-radius: 9999px;
+  }
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    background: #3b82f6;
+    border-radius: 9999px;
+    margin-top: -5px;
+    cursor: pointer;
+  }
+  .slider:focus::-webkit-slider-runnable-track {
+    background: #6b7280;
+  }
+  /* Firefox */
+  .slider::-moz-range-track {
+    background: #4b5563;
+    height: 6px;
+    border-radius: 9999px;
+  }
+  .slider::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+  }
+  
+  /* Tooltip styling */
+  .info-icon {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+  }
+  
+  .info-icon:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100%;
+    margin-bottom: 5px;
+    background-color: #27293d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: max-content;
+    max-width: 300px;
+    font-size: 14px;
+    font-weight: normal;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    white-space: normal;
+    line-height: 1.5;
+  }
+  
+  .info-icon:hover::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #27293d transparent transparent transparent;
+    z-index: 100;
+  }
+  
+  /* Enhanced tooltip styling for dynamic calculations */
+  @media (min-width: 768px) {
+    .info-icon:hover::after {
+      max-width: 400px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Utility to format numbers with commas, e.g., 103800 -> "103,800"
+    function formatWithCommas(value) {
+      return Number(value).toLocaleString('en-UK')
+    }
+
+    // Utility to parse a comma-formatted string into a number
+    function parseCommaString(str) {
+      return parseInt(str.replace(/,/g, ''), 10) || 0
+    }
+
+    // Sync function to update slider, hidden, and display inputs
+    function updateAll(slider, hidden, display, newValue, maxVal) {
+      newValue = Math.max(0, Math.min(maxVal, newValue))
+      slider.value = newValue
+      hidden.value = newValue
+      display.value = formatWithCommas(newValue)
+    }
+
+    // Helper to set up each slider group
+    function setupSliderGroup({sliderId, hiddenId, displayId, decreaseId, increaseId, defaultValue, maxValue}) {
+      const slider = document.getElementById(sliderId)
+      const hidden = document.getElementById(hiddenId)
+      const display = document.getElementById(displayId)
+      const decrease = document.getElementById(decreaseId)
+      const increase = document.getElementById(increaseId)
+
+      // Initialise
+      updateAll(slider, hidden, display, defaultValue, maxValue)
+
+      slider.addEventListener('input', () => {
+        updateAll(slider, hidden, display, parseInt(slider.value, 10), maxValue)
+        updateDynamicTooltips()
+      })
+
+      decrease.addEventListener('click', () => {
+        const val = parseInt(slider.value, 10) || 0
+        updateAll(slider, hidden, display, val - 100, maxValue)
+        updateDynamicTooltips()
+      })
+
+      increase.addEventListener('click', () => {
+        const val = parseInt(slider.value, 10) || 0
+        updateAll(slider, hidden, display, val + 100, maxValue)
+        updateDynamicTooltips()
+      })
+
+      display.addEventListener('input', () => {
+        const typedVal = parseCommaString(display.value)
+        updateAll(slider, hidden, display, typedVal, maxValue)
+        updateDynamicTooltips()
+      })
+    }
+
+    // Function to update dynamic tooltips based on current values
+    function updateDynamicTooltips() {
+      const annualRevenue = parseCommaString(document.getElementById('annualRevenueDisplay').value)
+      const annualBudget = parseCommaString(document.getElementById('annualBudgetDisplay').value)
+      const downtimeHourlyCost = parseCommaString(document.getElementById('downtimeDisplay').value)
+      const potentialBreachCost = parseCommaString(document.getElementById('potentialBreachDisplay').value)
+      
+      // Update annual budget tooltip
+      const budgetTooltip = document.querySelector('label:nth-child(1) .info-icon')
+      if (budgetTooltip) {
+        const recommendedMin = Math.round(annualRevenue * 0.005)
+        const recommendedMax = Math.round(annualRevenue * 0.015)
+        budgetTooltip.setAttribute('data-tooltip', 
+          `Your organisation's total allocated budget for cybersecurity measures for the current fiscal year. Based on your £${formatWithCommas(annualRevenue)} annual revenue, recommended security budget: £${formatWithCommas(recommendedMin)}-£${formatWithCommas(recommendedMax)} (0.5-1.5% of revenue).`
+        )
+      }
+      
+      // Update planned investment tooltip
+      const investmentTooltip = document.querySelector('label:nth-child(2) .info-icon')
+      if (investmentTooltip) {
+        const recommendedMin = Math.round(annualBudget * 0.25)
+        const recommendedMax = Math.round(annualBudget * 0.40)
+        investmentTooltip.setAttribute('data-tooltip', 
+          `Funds earmarked for new security tools or upgrades in the next year. Based on your £${formatWithCommas(annualBudget)} security budget, recommended investment: £${formatWithCommas(recommendedMin)}-£${formatWithCommas(recommendedMax)} (25-40% of budget).`
+        )
+      }
+      
+      // Update downtime cost tooltip
+      const downtimeTooltip = document.querySelector('label:nth-child(7) .info-icon')
+      if (downtimeTooltip) {
+        const calculatedCost = Math.round((annualRevenue / 8760) * 1.5)
+        downtimeTooltip.setAttribute('data-tooltip', 
+          `Financial cost of system unavailability. Based on your £${formatWithCommas(annualRevenue)} annual revenue, estimated downtime cost: £${formatWithCommas(calculatedCost)} per hour (using medium impact factor 1.5). Adjust based on your business criticality.`
+        )
+      }
+      
+      // Update potential breach cost tooltip
+      const breachTooltip = document.querySelector('label:nth-child(6) .info-icon')
+      if (breachTooltip) {
+        const exampleBreachCost = 50000 + (24 * downtimeHourlyCost) + 20000 + 10000
+        breachTooltip.setAttribute('data-tooltip', 
+          `Total breach impact including remediation, legal costs, and PR. Formula: Regulatory fines + (Downtime hours × Hourly cost) + Remediation costs + Reputational damage. Example with your £${formatWithCommas(downtimeHourlyCost)} hourly cost: £50,000 fine + (24 hours × £${formatWithCommas(downtimeHourlyCost)}) + £20,000 remediation + £10,000 PR = £${formatWithCommas(exampleBreachCost)} total breach cost.`
+        )
+      }
+      
+      // Update insurance coverage tooltip
+      const insuranceTooltip = document.querySelector('label:nth-child(11) .info-icon')
+      if (insuranceTooltip) {
+        const recommendedMin = Math.round(potentialBreachCost * 1)
+        const recommendedMax = Math.round(potentialBreachCost * 3)
+        insuranceTooltip.setAttribute('data-tooltip', 
+          `Recommended coverage: 1-3× your potential breach cost. Based on your £${formatWithCommas(potentialBreachCost)} potential breach cost, recommended coverage: £${formatWithCommas(recommendedMin)}-£${formatWithCommas(recommendedMax)}. Consider risk level: Low risk: 1× breach cost, Medium risk: 2× breach cost, High risk: 3× breach cost or more.`
+        )
+      }
+    }
+
+    // Set up each slider group with its parameters
+    setupSliderGroup({
+      sliderId: 'annualBudgetSlider',
+      hiddenId: 'annualBudgetHidden',
+      displayId: 'annualBudgetDisplay',
+      decreaseId: 'annualBudgetDecrease',
+      increaseId: 'annualBudgetIncrease',
+      defaultValue: 15000,
+      maxValue: 5000000
+    })
+    setupSliderGroup({
+      sliderId: 'plannedInvestmentSlider',
+      hiddenId: 'plannedInvestmentHidden',
+      displayId: 'plannedInvestmentDisplay',
+      decreaseId: 'plannedInvestmentDecrease',
+      increaseId: 'plannedInvestmentIncrease',
+      defaultValue: 10000,
+      maxValue: 2000000
+    })
+    setupSliderGroup({
+      sliderId: 'staffTrainingSlider',
+      hiddenId: 'staffTrainingHidden',
+      displayId: 'staffTrainingDisplay',
+      decreaseId: 'staffTrainingDecrease',
+      increaseId: 'staffTrainingIncrease',
+      defaultValue: 5000,
+      maxValue: 500000
+    })
+    setupSliderGroup({
+      sliderId: 'annualRevenueSlider',
+      hiddenId: 'annualRevenueHidden',
+      displayId: 'annualRevenueDisplay',
+      decreaseId: 'annualRevenueDecrease',
+      increaseId: 'annualRevenueIncrease',
+      defaultValue: 1000000,
+      maxValue: 100000000
+    })
+    setupSliderGroup({
+      sliderId: 'potentialFineSlider',
+      hiddenId: 'potentialFineHidden',
+      displayId: 'potentialFineDisplay',
+      decreaseId: 'potentialFineDecrease',
+      increaseId: 'potentialFineIncrease',
+      defaultValue: 50000,
+      maxValue: 2000000
+    })
+    setupSliderGroup({
+      sliderId: 'potentialBreachSlider',
+      hiddenId: 'potentialBreachHidden',
+      displayId: 'potentialBreachDisplay',
+      decreaseId: 'potentialBreachDecrease',
+      increaseId: 'potentialBreachIncrease',
+      defaultValue: 100000,
+      maxValue: 5000000
+    })
+    setupSliderGroup({
+      sliderId: 'downtimeSlider',
+      hiddenId: 'downtimeHidden',
+      displayId: 'downtimeDisplay',
+      decreaseId: 'downtimeDecrease',
+      increaseId: 'downtimeIncrease',
+      defaultValue: 1000,
+      maxValue: 100000
+    })
+    setupSliderGroup({
+      sliderId: 'insuranceCoverageSlider',
+      hiddenId: 'insuranceCoverageHidden',
+      displayId: 'insuranceCoverageDisplay',
+      decreaseId: 'insuranceCoverageDecrease',
+      increaseId: 'insuranceCoverageIncrease',
+      defaultValue: 0,
+      maxValue: 5000000
+    })
+    
+    // Initialise dynamic tooltips
+    updateDynamicTooltips()
+  })
+</script>
+{% endblock %}

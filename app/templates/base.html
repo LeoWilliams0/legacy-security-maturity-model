@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Legacy System Maturity Assessment{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
+    <!-- Custom CSS -->
+    <style>
+      :root {
+        --dark-bg: #1e2235;
+        --darker-bg: #171b2d;
+        --accent-purple: #7b5dbd;
+        --bright-purple: #9370db;
+        --light-purple: #a48fd1;
+        --very-light-purple: #e9e3f9;
+        --light-text: #e6e6e6;
+        --card-bg: #252a41;
+        --light-bg: #f8f9fa;
+        --light-card: #ffffff;
+        --light-text-color: #333333;
+      }
+
+      body {
+        background-color: var(--dark-bg);
+        color: var(--light-text);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .dark-card {
+        background-color: var(--card-bg);
+        color: var(--light-text);
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+      }
+
+      .btn-purple {
+        background: linear-gradient(135deg, #5e3fa0 0%, #7b5dbd 100%);
+        color: white;
+        transition: opacity 0.3s ease;
+      }
+
+      .btn-purple:hover {
+        opacity: 0.9;
+      }
+
+      .sidebar-link {
+        transition: all 0.3s ease;
+      }
+
+      .sidebar-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+      }
+
+      .gauge {
+        position: relative;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .light-mode {
+        background-color: var(--light-bg);
+        color: var(--light-text-color);
+      }
+
+      .light-mode #navbar {
+        background-color: white;
+        border-color: #e5e7eb;
+      }
+
+      .light-mode #navbar a {
+        color: #6b7280;
+      }
+
+      .light-mode #navbar a:hover {
+        color: var(--accent-purple);
+      }
+
+      .light-mode #navbar span {
+        color: #4b5563;
+      }
+
+      .light-mode footer {
+        background-color: white !important;
+        border-color: #e5e7eb !important;
+        color: #6b7280 !important;
+      }
+
+      .light-card {
+        background-color: var(--light-card);
+        color: var(--light-text-color);
+        border: 1px solid #e2e8f0;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--darker-bg);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent-purple);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--bright-purple);
+      }
+
+      .light-mode::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      .light-mode::-webkit-scrollbar-thumb {
+        background: var(--accent-purple);
+      }
+    </style>
+
+    <!-- Custom JS -->
+    {% block head_scripts %}{% endblock %}
+  </head>
+  <body class="min-h-screen" id="body">
+    <div class="flex">
+      <!-- Sidebar -->
+      {% include 'components/sidebar.html' %}
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col" id="main-content">
+        <!-- Top Navigation -->
+        {% include 'components/navbar.html' %}
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
+          <div class="flash-messages mb-4">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} p-2 mb-2">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %} {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer id="footer" class="bg-gray-800 border-t border-gray-700 p-4 text-center text-gray-400 text-sm transition-colors duration-300">Legacy System Maturity Assessment Tool &copy; 2025</footer>
+      </div>
+    </div>
+
+    <!-- Dark Mode Toggle Script -->
+    <script>
+      function toggleDarkMode() {
+        const body = document.getElementById('body')
+        const isDark = body.classList.toggle('light-mode')
+        const darkModeIcon = document.getElementById('darkModeIcon')
+        const darkModeText = darkModeIcon.nextElementSibling
+
+        // Toggle all cards
+        const allCards = document.querySelectorAll('.dark-card, .light-card')
+
+        allCards.forEach(card => {
+          if (isDark) {
+            // Switching to light mode
+            card.classList.remove('dark-card')
+            card.classList.add('light-card')
+          } else {
+            // Switching to dark mode
+            card.classList.remove('light-card')
+            card.classList.add('dark-card')
+          }
+        })
+
+        // Update icon and text
+        if (isDark) {
+          darkModeIcon.classList.remove('fa-sun')
+          darkModeIcon.classList.add('fa-moon')
+          if (darkModeText) darkModeText.textContent = 'Dark Mode'
+        } else {
+          darkModeIcon.classList.remove('fa-moon')
+          darkModeIcon.classList.add('fa-sun')
+          if (darkModeText) darkModeText.textContent = 'Light Mode'
+        }
+
+        // Save preference to localStorage
+        localStorage.setItem('lightMode', isDark)
+      }
+
+      // Check for saved preference
+      document.addEventListener('DOMContentLoaded', () => {
+        // Convert all white backgrounds to dark cards by default
+        const cards = document.querySelectorAll('.bg-white')
+        cards.forEach(card => {
+          card.classList.remove('bg-white')
+          card.classList.add('dark-card')
+        })
+
+        // Set dark mode icon
+        const darkModeIcon = document.getElementById('darkModeIcon')
+        if (darkModeIcon) {
+          darkModeIcon.classList.remove('fa-moon')
+          darkModeIcon.classList.add('fa-sun')
+        }
+
+        // Check if user prefers light mode
+        const lightModeSaved = localStorage.getItem('lightMode') === 'true'
+        if (lightModeSaved) {
+          toggleDarkMode()
+        }
+      })
+    </script>
+
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

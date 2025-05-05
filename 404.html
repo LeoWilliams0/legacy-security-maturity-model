@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-{% block title %}Page Not Found{% endblock %}
-{% block content %}
-  <div class="container mx-auto text-center py-20">
-    <h1 class="text-6xl font-bold">404</h1>
-    <p class="text-2xl mt-4">Sorry, the page you requested could not be found.</p>
-    <a href="{{ url_for('main.index') }}" class="mt-6 inline-block btn-purple">Go Home</a>
-  </div>
-{% endblock %}

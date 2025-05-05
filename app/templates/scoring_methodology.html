@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% block title %}Scoring Methodology{% endblock %} {% block content %}
+<div class="container mx-auto">
+  <div class="dark-card rounded shadow p-6">
+    <h1 class="text-3xl font-bold mb-6">Scoring Methodology Explained</h1>
+
+    <p class="text-gray-300 mb-8">This page explains how the maturity and financial scores are calculated within the assessment tool. Understanding the methodology provides context for interpreting your results and recommendations.</p>
+
+    <!-- Maturity Assessment Scoring Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4 border-b border-gray-600 pb-2">Maturity Assessment Scoring</h2>
+
+      <h3 class="text-xl font-medium text-purple-300 mb-2">1. Individual Question Responses</h3>
+      <p class="text-gray-200 mb-4">Each question in the five maturity dimensions (Security Controls, Financial Viability, Operational Performance, Governance & Compliance, Technical Debt & Maintenance) has five possible answers. These answers represent increasing levels of maturity. Internally, they are mapped to a score from 0 (least mature) to 4 (most mature).</p>
+
+      <h3 class="text-xl font-medium text-purple-300 mb-2">2. Weighted Dimension Scores (0-100)</h3>
+      <p class="text-gray-200 mb-4">Within each of the five dimensions, the individual question scores (0-4) are not simply averaged. Instead, each question is assigned a specific **weight** based on its perceived importance and impact on that dimension, particularly in the context of legacy systems. Foundational practices often carry higher weights.</p>
+      <p class="text-gray-200 mb-4">The process is roughly:</p>
+      <ol class="list-decimal list-inside text-gray-300 space-y-1 pl-4 mb-4">
+        <li>Convert the 0-4 response score to a 0-100 scale (e.g., 0 -> 0, 1 -> 25, 2 -> 50, 3 -> 75, 4 -> 100).</li>
+        <li>Multiply this scaled score by the question's specific weight for that dimension (e.g., a weight of 0.25 means it contributes 25% to the dimension's score).</li>
+        <li>Sum these weighted scores for all five questions within the dimension.</li>
+        <li>The result is the final Dimension Score, capped at 100.</li>
+      </ol>
+      <p class="text-gray-400 text-sm italic mb-4">(Note: The specific weights are defined internally in the tool's logic - see `utils.py::calculate_weighted_score`).</p>
+
+      <h3 class="text-xl font-medium text-purple-300 mb-2">3. Overall Maturity Score (0-100)</h3>
+      <p class="text-gray-200 mb-4">The Overall Maturity Score provides a high-level summary. It is calculated as the simple **arithmetic average** of the five individual Dimension Scores (Security, Financial, Operational, Governance, Technical Debt).</p>
+
+      <h3 class="text-xl font-medium text-purple-300 mb-2">4. Mapping to Maturity Levels</h3>
+      <p class="text-gray-200 mb-4">
+        Both the Overall Score and the individual Dimension Scores are mapped to one of five Maturity Levels (Level 1: Ad Hoc to Level 5: Optimised) based on predefined score ranges.
+        <a href="{{ url_for('main.maturity_levels_explained') }}" class="text-purple-400 hover:underline">Click here to learn more about the Maturity Levels</a>.
+      </p>
+    </div>
+
+    <!-- Financial Security Scoring Section -->
+    <div>
+      <h2 class="text-2xl font-semibold mb-4 border-b border-gray-600 pb-2">Financial Security Score Calculation</h2>
+
+      <p class="text-gray-200 mb-4">The Financial Security Score provides an indicator of the organisation's financial readiness to manage cybersecurity risks associated with its legacy systems. This score is calculated based on the data provided in the Financial Security Assessment form.</p>
+      <p class="text-gray-200 mb-4">The current prototype uses a **ratio-based approach**:</p>
+      <ol class="list-decimal list-inside text-gray-300 space-y-1 pl-4 mb-4">
+        <li>**Calculate Total Potential Risk:** This is estimated by summing the Potential Fine, Potential Breach Cost, and the Estimated Annual Downtime Cost (Downtime Cost per Hour * Average Downtime Hours per Year).</li>
+        <li>**Calculate Budget-to-Risk Ratio:** The Annual Security Budget is divided by the Total Potential Risk. A higher ratio indicates better financial coverage.</li>
+        <li>**Scale to Base Score (0-100):** The ratio is scaled (currently linearly) to produce a score out of 100. A ratio covering 100% or more of the risk would result in a score of 100.</li>
+        <li>**Cyber Insurance Bonus:** A small bonus (e.g., +10 points) is added if the organisation has cyber insurance, but the final score is still capped at 100.</li>
+      </ol>
+      <p class="text-gray-400 text-sm italic mb-4">(Note: This financial scoring mechanism is a prototype and provides a high-level indication. It does not constitute a formal financial risk assessment - see `models.py::FinancialSecurityAssessment::calculate_financial_score`).</p>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="{{ url_for('main.dashboard') }}" class="btn-purple py-2 px-4 rounded inline-block transition"> <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

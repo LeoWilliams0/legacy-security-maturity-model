@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}About This Tool{% endblock %}
+
+{% block content %}
+<div class="container mx-auto">
+  <div class="dark-card rounded shadow p-6">
+    <h1 class="text-3xl font-bold mb-6">About the Legacy System Maturity Assessment Tool</h1>
+
+    <div class="space-y-4 text-gray-200">
+      <p>
+        This Legacy System Maturity Assessment Tool was developed as part of a final-year dissertation project for the BSc (Hons) Cyber Security program at the University of the West of England (UWE Bristol), submitted by Leo Williams (Student ID: 22073036) in {{ date }}.
+      </p>
+      <p>
+        The primary goal of this tool is to provide organisations operating under financial constraints with a structured method for assessing the security, operational, and financial posture of their legacy systems. It aims to bridge the gap between standard cybersecurity frameworks and the practical realities of managing older technology with limited budgets.
+      </p>
+      <p>
+        By evaluating systems across five key dimensions and incorporating financial context, the tool generates prioritised recommendations to help guide investment decisions and risk mitigation efforts.
+      </p>
+      <p>
+        <strong>Version:</strong> {{ version }}
+      </p>
+
+      <div class="border-t border-gray-600 pt-4 mt-6">
+        <h2 class="text-xl font-semibold mb-3 text-red-400">Disclaimer</h2>
+        <p class="italic">
+          This tool is a prototype developed for academic purposes. The scores, maturity levels, and recommendations generated are based on a predefined model and self-reported data. They should be used as informational input to support further analysis and professional judgment, not as definitive directives or replacements for formal security audits, financial risk assessments, or compliance checks. Consult with qualified cybersecurity, IT, and financial professionals for advice tailored to your specific organisational context and requirements.
+        </p>
+      </div>
+    </div>
+
+     <div class="mt-8 text-center">
+        <a href="{{ url_for('main.dashboard') }}" class="btn-purple py-2 px-4 rounded inline-block transition">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

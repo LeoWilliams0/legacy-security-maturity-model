@@ -1,0 +1,99 @@
+{% extends 'base.html' %} {% block title %}Financial Assessment Details{% endblock %} {# Removed the {% block head_scripts %} section with imports #} {% block content %}
+<div class="container mx-auto">
+  <div class="dark-card rounded shadow p-6">
+    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+      <h1 class="text-2xl font-bold">Financial Assessment Details</h1>
+      <span class="text-lg text-gray-400"> Recorded on: {{ assessment.created_at.strftime('%B %d, %Y at %H:%M') }} </span>
+      <div>
+        <a href="{{ url_for('main.compare_financial') }}" class="text-purple-400 hover:underline text-sm mr-4" title="Compare with other assessments"> <i class="fas fa-exchange-alt mr-1"></i> Compare Assessments </a>
+        <a href="{{ url_for('main.financial_security') }}" class="btn-purple py-1 px-3 rounded inline-flex items-center transition shadow-sm text-sm"> <i class="fas fa-plus mr-2"></i> Add New </a>
+      </div>
+    </div>
+
+    {# --- Main Content Grid --- #}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      {# --- Column 1: Budget & Investment --- #}
+      <div class="space-y-6">
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Annual Security Budget</h2>
+          <p class="text-2xl font-semibold text-purple-300">£{{ assessment.annual_security_budget | format_number }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Planned Investment</h2>
+          <p class="text-2xl font-semibold text-purple-300">£{{ assessment.planned_security_investment | format_number }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Staff & Training Budget</h2>
+          <p class="text-2xl font-semibold text-purple-300">£{{ assessment.security_staff_training | format_number }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Annual Revenue</h2>
+          <p class="text-2xl font-semibold text-purple-300">£{{ assessment.annual_revenue | format_number }}</p>
+        </div>
+      </div>
+
+      {# --- Column 2: Risk & Costs --- #}
+      <div class="space-y-6">
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Potential Fine Cost</h2>
+          <p class="text-2xl font-semibold text-red-400">£{{ assessment.potential_fine | format_number }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Potential Breach Cost</h2>
+          <p class="text-2xl font-semibold text-red-400">£{{ assessment.potential_breach_cost | format_number }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Downtime Cost / Hour</h2>
+          <p class="text-2xl font-semibold text-red-400">£{{ assessment.downtime_cost_per_hour | format_number }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Avg Downtime / Year</h2>
+          <p class="text-2xl font-semibold text-yellow-400">{{ assessment.average_downtime_hours if assessment.average_downtime_hours is not none else 'N/A' }} hrs</p>
+        </div>
+      </div>
+
+      {# --- Column 3: Risk Posture & Score --- #}
+      <div class="space-y-6">
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Acceptable Risk Level</h2>
+          <p class="text-2xl font-semibold capitalize {{ 'text-green-400' if assessment.acceptable_risk_level == 'low' else ('text-yellow-400' if assessment.acceptable_risk_level == 'medium' else 'text-red-400') }}">{{ assessment.acceptable_risk_level | replace('-', ' ') if assessment.acceptable_risk_level else 'N/A' }}</p>
+        </div>
+        <div class="dark-card border border-gray-700 rounded p-4 shadow-inner">
+          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Cyber Insurance</h2>
+          {% if assessment.has_cyber_insurance == 'yes' %}
+          <p class="text-2xl font-semibold text-green-400">Yes</p>
+          <p class="text-sm text-gray-300 mt-1">Coverage: £{{ assessment.cyber_insurance_coverage | format_number if assessment.cyber_insurance_coverage else 'Not specified' }}</p>
+          {% else %}
+          <p class="text-2xl font-semibold text-gray-500">No</p>
+          {% endif %}
+        </div>
+        <div class="dark-card border-2 border-purple-500 rounded p-4 shadow-lg">
+          {# Highlight Score #}
+          <h2 class="text-sm font-medium text-gray-300 uppercase tracking-wider mb-1">Calculated Financial Score</h2>
+          <p class="text-4xl font-bold text-white">{{ score|round(1) if score is not none else 'N/A' }}<span class="text-2xl text-gray-400">/100</span></p>
+          {% if fin_level_num is not none %}
+          <p class="text-sm text-purple-300 mt-1">Level {{ fin_level_num }}: {{ fin_level_name }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {# --- End Main Content Grid --- #} {# Interpretation Section (uses score directly) #}
+    <div class="border-t border-gray-700 mt-8 pt-4">
+      <h3 class="text-lg font-semibold mb-2">Interpretation</h3>
+      {% if score is not none %} {% if score < 30 %}
+      <p class="text-red-400"><i class="fas fa-exclamation-triangle mr-2"></i>The low score suggests a significant gap between the security budget/coverage and the potential financial risks (breach, fines, downtime). Urgent review of budget allocation, risk mitigation strategies, and potentially insurance is highly recommended.</p>
+      {% elif score < 60 %}
+      <p class="text-yellow-400"><i class="fas fa-exclamation-circle mr-2"></i>The score indicates a moderate financial posture. While some budget exists, it may not fully cover potential high-impact events. Review specific cost drivers (breach, downtime) and consider targeted budget increases or risk transfer (insurance).</p>
+      {% else %}
+      <p class="text-green-400"><i class="fas fa-check-circle mr-2"></i>The score suggests a relatively strong financial posture regarding security risks. Budget appears reasonably aligned with potential costs. Continue regular reviews and maintain adequate insurance coverage.</p>
+      {% endif %} {% else %}
+      <p class="text-gray-500 italic">Could not calculate score. Please ensure all required financial data is entered.</p>
+      {% endif %}
+    </div>
+
+    <div class="mt-8 text-center border-t border-gray-700 pt-4">
+      <a href="{{ url_for('main.compare_financial') }}" class="text-gray-400 hover:text-white hover:underline text-sm inline-flex items-center"> <i class="fas fa-arrow-left mr-2"></i> Back to Financial History / Selection </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
