@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Choose System for Recommendations{% endblock %}
+{% block content %}
+<div class="container mx-auto">
+  <div class="dark-card rounded shadow p-6">
+    <h1 class="text-xl font-bold mb-4">Select System for Recommendations</h1>
+    <form method="get" action="{{ url_for('main.redirect_to_latest_assessment') }}">
+      <div class="mb-4">
+        <label for="system_id" class="block text-gray-300 font-medium mb-2">Choose a System:</label>
+        <select name="system_id" id="system_id" class="p-2 rounded bg-gray-700 text-white">
+          {% for system in systems %}
+          <option value="{{ system.id }}">{{ system.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn-purple py-2 px-4 rounded shadow-md">Get Recommendations</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %} {% block title %}Recommendations Engine Explained{% endblock %} {% block content %}
+<div class="container mx-auto">
+  <div class="dark-card rounded shadow p-6">
+    <h1 class="text-3xl font-bold mb-6">How Recommendations Are Generated</h1>
+
+    <p class="text-gray-300 mb-8">The recommendations provided by this tool aim to guide your efforts in improving legacy system security and management, particularly under financial constraints. Here's an overview of how they are generated and prioritized:</p>
+
+    <div class="space-y-6">
+      <!-- Base Prioritization Section -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-3 text-purple-300">1. Base Priority from Maturity Scores</h2>
+        <p class="text-gray-200 mb-4">The primary driver for technical and procedural recommendations is your response to the questions in the Maturity Assessment. Each answer corresponds to a score (0-4). Lower scores indicate lower maturity and trigger recommendations with higher urgency:</p>
+        <ul class="list-disc list-inside text-gray-300 pl-4 mb-4">
+          <li>Scores 0 or 1 typically trigger **Critical** priority recommendations.</li>
+          <li>Score 2 typically triggers **High** priority recommendations.</li>
+          <li>Score 3 typically triggers **Low** priority recommendations (focusing on moving towards best practice).</li>
+          <li>Score 4 (highest maturity) generally does not trigger a recommendation for that specific item, unless influenced by other factors (see below).</li>
+        </ul>
+        <p class="text-gray-400 text-sm italic">(This mapping is defined in `utils.py::score_to_priority_0to4` and links to recommendation text in `dic_recomentations.py`).</p>
+      </div>
+
+      <!-- Financial Context Adjustment Section -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-3 text-purple-300">2. Financial Context Adjustments</h2>
+        <p class="text-gray-200 mb-4">The tool attempts to make recommendations more relevant by considering the financial data entered in the Financial Security Assessment. This can influence the *priority* of some recommendations:</p>
+        <ul class="list-disc list-inside text-gray-300 pl-4 mb-4">
+          <li>
+            **Elevation:** A recommendation might be moved to a *higher* priority (e.g., from High to Critical, or Low to High) if financial data indicates significant risk in that area. For example:
+            <ul>
+              <li>Poor patching practices (normally High) might become Critical if the Potential Breach Cost is extremely high.</li>
+              <li>Weak system uptime (normally High) might become Critical if the Estimated Annual Downtime Cost is very significant compared to the budget.</li>
+              <li>Basic governance controls (normally High) might become Critical if Potential Fines are substantial.</li>
+            </ul>
+          </li>
+          <li>**Contextual Notes:** Some recommendations might have notes added if financial constraints are relevant (e.g., mentioning that implementing a costly solution might be challenging given a low budget, or highlighting low-cost foundational fixes like documentation if the budget is critical).</li>
+          <li>**Moved Indicator:** Recommendations whose priority was adjusted due to financial context are marked with a <span class="text-yellow-300 font-bold">*</span> symbol. Hovering over this symbol provides a brief explanation for the priority change.</li>
+        </ul>
+        <p class="text-gray-400 text-sm italic">(The specific adjustment rules are implemented in `recommendations.py`).</p>
+      </div>
+
+      <!-- Global Financial Recommendations Section -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-3 text-purple-300">3. Global Financial Recommendations</h2>
+        <p class="text-gray-200 mb-4">Separate recommendations related directly to your financial posture are also generated based on predefined thresholds:</p>
+        <ul class="list-disc list-inside text-gray-300 pl-4 mb-4">
+          <li>Recommendations to increase the **Annual Security Budget** are triggered if the budget covers a low percentage of the calculated Total Potential Risk (fines + breach + downtime).</li>
+          <li>Recommendations regarding **Cyber Insurance** are generated if none is present, or if the current coverage appears low relative to the Potential Breach Cost.</li>
+          <li>Recommendations related to **Planned Investment** or **Staff/Training Budgets** are triggered if these allocations seem low compared to the overall security budget.</li>
+        </ul>
+        <p class="text-gray-400 text-sm italic">(These thresholds and recommendations are defined in `recommendations.py`).</p>
+      </div>
+
+      <!-- Timeline Guidance Section -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-3 text-purple-300">4. Implementation Timeline</h2>
+        <p class="text-gray-200 mb-4">The provided implementation timeline is a **general suggestion** based on recommendation priority (Critical first, then High, etc.).</p>
+        <p class="text-red-400 font-semibold mb-4">Important: For systems scoring very low and generating numerous 'Critical' recommendations, the initial 30-day phase may be ambitious. Users must apply judgment to further prioritize *within* the Critical category based on feasibility, cost, dependencies, and immediate risk reduction potential.</p>
+      </div>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="{{ url_for('main.dashboard') }}" class="btn-purple py-2 px-4 rounded inline-block transition"> <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
