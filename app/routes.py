@@ -628,7 +628,7 @@ def combined_csv(system_id, assessment_id):
     system = System.query.get_or_404(system_id)
     assessment = Assessment.query.get_or_404(assessment_id)
 
-    # latest org‑wide financial assessment
+    # latest org-wide financial assessment
     financial_assessment = FinancialSecurityAssessment.query.order_by(
         FinancialSecurityAssessment.created_at.desc()
     ).first()

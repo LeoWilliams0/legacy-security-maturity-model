@@ -255,7 +255,7 @@ def generate_csv_export(assessment, system):
     return tmp.name
 
 
-#Financial‑only PDF 
+#Financial-only PDF 
 def generate_financial_pdf_report(financial_assessment):
     temp_file = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
     doc = SimpleDocTemplate(temp_file.name, pagesize=letter)
@@ -284,7 +284,7 @@ def generate_financial_pdf_report(financial_assessment):
         ["Potential breach cost", f"{float(fa.potential_breach_cost or 0):,.0f}"],
         ["Downtime / hr", f"{float(fa.downtime_cost_per_hour or 0):,.0f}"],
         ["Avg downtime hrs/yr", f"{fa.average_downtime_hours or 0:,}"],
-        ["Cyber‑insurance?", fa.has_cyber_insurance],
+        ["Cyber-insurance?", fa.has_cyber_insurance],
         ["Coverage", f"{float(fa.cyber_insurance_coverage or 0):,.0f}"],
         ["Calculated score", f"{fin_score:.1f}/100"],
         ["Maturity level", f"Level {fin_level}: {fin_name}"]
@@ -300,7 +300,7 @@ def generate_financial_pdf_report(financial_assessment):
     return temp_file.name
 
 
-#Financial‑only CSV
+#Financial-only CSV
 def generate_financial_csv_export(financial_assessment):
     temp_file = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
 
@@ -308,7 +308,7 @@ def generate_financial_csv_export(financial_assessment):
     fin_score = fa.calculate_financial_score()
     fin_level, fin_name, _ = get_maturity_level(fin_score)
     
-    with open(temp_file.name, "w", newline="") as f:
+    with open(temp_file.name, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["Field", "Value"])
         rows = [
@@ -346,7 +346,7 @@ def generate_combined_csv(assessment, system, financial_assessment, recommendati
     fa_score = financial_assessment.calculate_financial_score()
     fa_level, fa_name, _ = get_maturity_level(fa_score)
 
-    with open(temp_file.name, "w", newline="") as f:
+    with open(temp_file.name, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
 
         # System / assessment header

@@ -112,7 +112,7 @@
     </div>
   </div>
 
-  <!-- ────────────── Priority‑list macro & renderer ────────────── -->
+  <!-- ────────────── Priority-list macro & renderer ────────────── -->
   {% macro rec_list(level_name, colour, icon_class, items) %} {% if items %}
   <div class="mb-4 border border-{{ colour }}-700 rounded overflow-visible">
     <button @click="open{{ level_name }} = !open{{ level_name }}" class="w-full flex justify-between items-center px-4 py-3 bg-{{ colour }}-700 {{ 'text-black' if colour=='yellow' else 'text-white' }} text-left transition-colors duration-150 hover:bg-{{ colour }}-600">

@@ -71,7 +71,7 @@ QUESTION_RECOMMENDATIONS = {
     },
     14: {
         "dimension": "operational",
-        "text": "Formalise incident management: define clear roles, escalation paths and post‑incident reviews.",
+        "text": "Formalise incident management: define clear roles, escalation paths and post-incident reviews.",
         "cost": "Low" # Process definition
     },
     15: {
@@ -110,7 +110,7 @@ QUESTION_RECOMMENDATIONS = {
     # Technical Debt Management recommendations
     21: {
         "dimension": "technical_debt",
-        "text": "Improve documentation (architecture diagrams, data flows); a well‑documented system is easier to maintain.",
+        "text": "Improve documentation (architecture diagrams, data flows); a well-documented system is easier to maintain.",
         "cost": "Low" # Time/effort
     },
     22: {
